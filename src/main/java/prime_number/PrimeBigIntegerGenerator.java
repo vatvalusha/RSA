@@ -1,8 +1,12 @@
 package prime_number;
 
 import java.math.BigInteger;
+import java.util.concurrent.ThreadLocalRandom;
 
-import static until.BigIntegerUtil.generateRandomNumber;
+import static java.math.BigInteger.ONE;
+import static java.math.BigInteger.valueOf;
+
+//import static until.BigIntegerUtil.generateRandomNumber;
 
 /**
  * Created by vatva on 08.02.2017.
@@ -16,6 +20,11 @@ public class PrimeBigIntegerGenerator {
     private BigInteger findX(int length) {
         return generateRandomNumber(length);
     }
+
+    private BigInteger generateRandomNumber(int length) {
+        return BigInteger.valueOf(0);
+    }
+
     /**
      * Finds a prime number p derived from another prime number
      * because {@code p - 1} has to contain big prime divisors (in the best case, p - 1 = 2p', where p' - prime)
@@ -28,7 +37,7 @@ public class PrimeBigIntegerGenerator {
         BigInteger prime = findPrimeNumber(length);
         BigInteger resultPrime;
 
-        for (int i = 1;; i++) {
+        for (int i = 1; ; i++) {
             resultPrime = prime.multiply(BigInteger.valueOf(2))
                     .multiply(BigInteger.valueOf(i))
                     .add(BigInteger.ONE);
@@ -138,7 +147,7 @@ public class PrimeBigIntegerGenerator {
      * Finds X of the specified length that is lower than the specified MAX value.
      *
      * @param length length of the generated X in bytes
-     * @param max upper limit of a {@code BigInteger} X
+     * @param max    upper limit of a {@code BigInteger} X
      * @return {@code BigInteger} X
      */
     private BigInteger findX(int length, BigInteger max) {
@@ -150,4 +159,72 @@ public class PrimeBigIntegerGenerator {
         return x;
     }
 
+    /**
+     * Created by vatva on 09.02.2017.
+     */
+    public static class Operator {
+        private static final BigInteger TWO = valueOf(2);
+
+        public boolean isProbablePrime(int certainty, BigInteger value) {
+            BigInteger w = value;
+            if (w.equals(TWO))
+                return true;
+            if (!w.testBit(0) || w.equals(ONE))
+                return false;
+            int rounds = 0;
+            int n = (Math.min(certainty, Integer.MAX_VALUE - 1) + 1) / 2;
+
+            // The relationship between the certainty and the number of rounds
+            // we perform is given in the draft standard ANSI X9.80, "PRIME
+            // NUMBER GENERATION, PRIMALITY TESTING, AND PRIMALITY CERTIFICATES".
+            int sizeInBits = value.bitLength();
+            if (sizeInBits < 100) {
+                rounds = 50;
+                rounds = n < rounds ? n : rounds;
+                return passesMillerRabin(rounds, value);
+            }
+
+            if (sizeInBits < 256) {
+                rounds = 27;
+            } else if (sizeInBits < 512) {
+                rounds = 15;
+            } else if (sizeInBits < 768) {
+                rounds = 8;
+            } else if (sizeInBits < 1024) {
+                rounds = 4;
+            } else {
+                rounds = 2;
+            }
+            rounds = n < rounds ? n : rounds;
+
+            return passesMillerRabin(rounds, value);
+        }
+
+        private boolean passesMillerRabin(int iterations, BigInteger value) {
+            // Find a and m such that m is odd and this == 1 + 2**a * m
+            BigInteger thisMinusOne = value.subtract(ONE);
+            BigInteger m = thisMinusOne;
+            int a = m.getLowestSetBit();
+            m = m.shiftRight(a);
+
+            // Do the tests
+
+            for (int i = 0; i < iterations; i++) {
+                // Generate a uniform random on (1, this)
+                BigInteger b;
+                do {
+                    b = new BigInteger(value.bitLength(), ThreadLocalRandom.current());
+                } while (b.compareTo(ONE) <= 0 || b.compareTo(value) >= 0);
+
+                int j = 0;
+                BigInteger z = b.modPow(m, value);
+                while (!((j == 0 && z.equals(ONE)) || z.equals(thisMinusOne))) {
+                    if (j > 0 && z.equals(ONE) || ++j == a)
+                        return false;
+                    z = z.modPow(TWO, value);
+                }
+            }
+            return true;
+        }
+    }
 }

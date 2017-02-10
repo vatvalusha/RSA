@@ -15,47 +15,51 @@ public class Abonent {
 
     private BigInteger phin;
 
-    public Abonent(BigInteger p, BigInteger q, BigInteger e){
+    public Abonent(BigInteger p, BigInteger q) {
         this.p = p;
         this.q = q;
         n = q.multiply(p);//open key
         phin = (q.subtract(BigInteger.ONE)).multiply(p.subtract(BigInteger.ONE));
-        this.e = e; //open key
+        e = new BigInteger("65537"); //open key
         d = e.modInverse(phin);
-        message = new BigInteger("123456789");
+//        message = new BigInteger("123456789");
     }
 
-    public String toString(){
+    public String toString() {
         return "e = " + e.toString() + "\nd = " + d.toString();
     }
 
-    public BigInteger encrypt(BigInteger massege, BigInteger e){
-        return massege.modPow(e,n);
-    }
-
-    public BigInteger signMessage(BigInteger message) {
-        return message.modPow(d, n);
+    public BigInteger encrypt(BigInteger massege, BigInteger e) {
+        return massege.modPow(e, n);
     }
 
     public BigInteger decrypt(BigInteger encMessege) {
-        return encMessege.modPow(d,n);
+        return encMessege.modPow(d, n);
+    }
+
+
+    public void showParamrtrs(Abonent abonent) {
+
+        System.out.println("ABONENT A------------------------------------------------");
+//        System.out.println("message: ");
+//        BigInteger message = abonent.getMessage();
+//        System.out.println(abonent.getMessage().toString(16));
+        System.out.println("Get P: ");
+        System.out.println(abonent.getP().toString(16));
+        System.out.println("Get Q: ");
+        System.out.println(abonent.getQ().toString(16));
+        System.out.println("Get N: ");
+        System.out.println(abonent.getN().toString(16));
+        System.out.println("Get D: ");
+        System.out.println(abonent.getD().toString(16));
+        System.out.println("Get E:");
+        System.out.println(abonent.getE().toString(16));
     }
 
     public BigInteger getP() {
         return p;
     }
-    public void showParamrtrs(Abonent abonent){
-        System.out.println("ABONENT A------------------------------------------------");
-        System.out.println("message: ");
-        BigInteger message = abonent.getMessage();
-        System.out.println(abonent.getMessage().toString(16));
-        System.out.println("Get N: ");
-        System.out.println(abonent.getN().toString(16));
-        System.out.println("Get D: ");
-        System.out.println(abonent.getD().toString(16));
-        System.out.println("Get E:" );
-        System.out.println(abonent.getE().toString(16));
-    }
+
 
     public void setP(BigInteger p) {
         this.p = p;
