@@ -17,12 +17,12 @@ public class Runner {
         GeneratePrimeNumber generatePrimeNumber = new GeneratePrimeNumber();
         generatePrimeNumber.generaitPirime();
         Abonent abonentA = new Abonent(generatePrimeNumber.getP1(), generatePrimeNumber.getP2());
-//        abonentA.setMessage(new BigInteger("1996"));
-
+//        Abonent abonentA = new Abonent(new BigInteger("3"),new BigInteger("7"));
+        System.out.println(abonentA.getMessage());
 
         abonentA.showParamrtrs(abonentA);
-        System.out.println("Input Message: ");
-        abonentA.setMessage(scanner.nextBigInteger());
+//        System.out.println("Input Message: ");
+//        abonentA.setMessage(scanner.nextBigInteger());
         BigInteger encrypt = abonentA.encrypt(abonentA.getMessage(), abonentA.getE());
         System.out.println("Encrypt message: " + encrypt.toString(16));
 

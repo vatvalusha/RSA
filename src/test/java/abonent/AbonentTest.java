@@ -1,5 +1,6 @@
 package abonent;
 
+import org.junit.Test;
 import prime_number.GeneratePrimeNumber;
 import runner.Runner;
 
@@ -25,5 +26,10 @@ public class AbonentTest {
         assertEquals(new BigInteger("1996"), abonent.decrypt(new BigInteger("23f6a5c008b9f487e7ca70620f74f2b7a2d734fe6a3c81d7c88c57c2598308283b4f7548a96044b161bc60c464b550a0d3ed7bafe1a47a613445a3dfa77fd358", 16)));
     }
 
+    @Test
+    public void cutMessageTest(){
+        Abonent abonent = new Abonent(new BigInteger("3"), new BigInteger("7"));
+        assertEquals("if message biggest then N, cutting this message message = message.mod(N)",new BigInteger("3"),abonent.generateMessage(new BigInteger("24")));
+    }
 
 }

@@ -1,6 +1,7 @@
 package abonent;
 
 import java.math.BigInteger;
+import java.util.Scanner;
 
 /**
  * Created by vatva on 08.02.2017.
@@ -15,6 +16,8 @@ public class Abonent {
 
     private BigInteger phin;
 
+    Scanner scanner = new Scanner(System.in);
+
     public Abonent(BigInteger p, BigInteger q) {
         this.p = p;
         this.q = q;
@@ -22,7 +25,8 @@ public class Abonent {
         phin = (q.subtract(BigInteger.ONE)).multiply(p.subtract(BigInteger.ONE));
         e = new BigInteger("65537"); //open key
         d = e.modInverse(phin);
-//        message = new BigInteger("123456789");
+        System.out.println("Enter message: ");
+        message = generateMessage(inputMessage());
     }
 
     public String toString() {
@@ -37,6 +41,13 @@ public class Abonent {
         return encMessege.modPow(d, n);
     }
 
+    public BigInteger generateMessage(BigInteger message){
+        if(message.compareTo(getN()) == 1) return message.mod(getN());
+        return message;
+    }
+    public BigInteger inputMessage(){
+        return scanner.nextBigInteger();
+    }
 
     public void showParamrtrs(Abonent abonent) {
 
